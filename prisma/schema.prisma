@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id_user Int @id @default(autoincrement())
+  username String @unique
+  email String @unique
+  password String
+  role role @default(pengguna)
+  ulasan_buku ulasan_buku[]
+  koleksi koleksi_pribadi[]
+  peminjaman peminjaman[]
+
+}
+
+enum role{
+  pengguna
+  petugas
+  admin
+}
+
+model buku {
+  id_buku Int @id @default(autoincrement())
+  judul String 
+  deskripsi String
+  penulis String
+  penerbit String
+  tahunterbit String
+  gambar String ?
+  jumlahhalaman Int
+  ulasan_buku ulasan_buku[]
+  kategori_buku_realsi kategori_buku_relasi[]
+  koleksi koleksi_pribadi[]
+  pemonjaman peminjaman[]
+}
+
+model kategori_buku {
+  id_kategori Int @id @default(autoincrement())
+  nama_kategori String
+  kategoribukurelasi kategori_buku_relasi[]
+}
+
+model peminjaman {
+  id_peminjaman Int @id @default(autoincrement())
+  User user @relation(fields: [id_user],references: [id_user],onDelete: Cascade)
+  id_user Int
+  Buku buku @relation(fields: [id_buku],references: [id_buku],onDelete: Cascade)
+  id_buku Int
+  tgl_pinjam DateTime
+  tgl_kembali DateTime
+  status status @default(dipinjam)
+
+}
+
+enum status{
+  dipinjam
+  dikembalikan
+  hilang
+}
+
+model koleksi_pribadi {
+  id_koleksi Int @id @default(autoincrement())
+  User user @relation(fields: [id_user],references: [id_user],onDelete: Cascade)
+  id_user Int
+  Buku buku @relation(fields: [id_buku],references: [id_buku],onDelete: Cascade)
+  id_buku Int
+}
+
+model ulasan_buku {
+  id_ulasan Int @id @default(autoincrement())
+  User user @relation(fields: [id_user],references: [id_user],onDelete: Cascade)
+  id_user Int
+  Buku buku @relation(fields: [id_buku],references: [id_buku],onDelete: Cascade)
+  id_buku Int
+  ulasan String
+  rating Int
+  tgl_ulasan DateTime
+}
+
+model kategori_buku_relasi {
+  id_kategorirelasi Int @id @default(autoincrement())
+  buku buku @relation(fields: [id_buku],references: [id_buku],onDelete: Cascade)
+  id_buku Int
+  kategori_buku kategori_buku @relation(fields: [id_kategori],references: [id_kategori],onDelete: Cascade)
+  id_kategori Int
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
